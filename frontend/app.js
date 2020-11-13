@@ -1,6 +1,7 @@
-d3.json("localhost:5000/Zachary%20Gilliom")
+
+function requestAPI() {
+	d3.json("http://localhost:5000/Zachary%20Gilliom")
 	.then(function(data) {
 		console.log(data)
-	});
-
-document.write(data)
+	}
+}

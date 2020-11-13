@@ -9,8 +9,19 @@
 		<h1>
 			Test App
 		</h1>
-	<script src="https://d3js.org/d3.v6.min.js"></script>
-	<script src="app.js"></script>
+				<script>
+					d3.json("http://localhost:5000/Zachary%20Gilliom").then(function(data) {
+						console.log(data)
+						const val = Object.values(data);
+						const key = Object.keys(data);
+
+						for (let i =0; i < val.length; i++) {
+							document.write(val[i][9]);
+						}
+					});
+				</script>
+		<script src="https://d3js.org/d3.v6.min.js"></script>
+		<script src="../app.js"></script>
 	</body>
 </html>
 	

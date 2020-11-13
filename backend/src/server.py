@@ -2,8 +2,11 @@ import pandas as pd
 import sqlite3
 from flask import Flask
 from flask import jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app)
 
 class Database:
     
@@ -16,7 +19,7 @@ class Database:
         return cur
 
     def query(self, name):
-        cur = self.connect(self.path))
+        cur = self.connect(self.path)
         rows = cur.fetchall()
         return rows
 
