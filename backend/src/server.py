@@ -8,38 +8,27 @@ app = Flask(__name__)
 
 CORS(app)
 
+DATABASE_PATH = "/home/zacharygilliom/pythonProjects/processing-dashboard/backend/data/customer_orders.db"
+
 class Database:
     
     def __init__(self, path):
         self.path = path 
 
-    def connect(self, path):
+    def connect(self):
         connection = sqlite3.connect(self.path)
-        cur = connection.cursor()
-        return cur
+        return connection
 
     def query(self, name):
-        cur = self.connect(self.path)
+        connection = self.connect(self.path)
+        cur = connection.cursor() 
+        cur.execute("SELECT * FROM orders WHERE order_writer = ?", (name,))
         rows = cur.fetchall()
+        cur.close()
         return rows
 
 locationData = {'order_writer': ['Zachary Gilliom', 'John Smith', 'Ben James'], 'locaton': ['NU', 'JC', 'MF']}
 locationDataframe = pd.DataFrame(data=locationData)
-
-def connectDatabase():
-    connection = sqlite3.connect("/home/zacharygilliom/pythonProjects/processing-dashboard/backend/data/customer_orders.db")
-    cur = connection.cursor()
-    return cur
-
-def queryDatabase(cur, name):
-    cur.execute("SELECT * FROM orders WHERE order_writer = ?", (name,))
-    rows = cur.fetchall()
-    return rows
-
-# def getDatabase(cur):
-#     cur.execute("SELECT * FROM orders")
-#     rows = cur.fetchall()
-#     return rows
 
 def addCalculatedColumns(dataframe):
     # Add our 3 columns and convert the timedelta series to include on the days value.
@@ -60,9 +49,8 @@ def addCalculatedColumns(dataframe):
 
 @app.route('/<string:name>', methods=['GET'])
 def namefunction(name):
-    cursor = connectDatabase()
-    rows = queryDatabase(cursor, name)
-    # rows = getDatabase(cursor)
+    database = Database(DATABASE_PATH)
+    rows = database.query(name)
     col_names = ["customer_id", "company", "received", "started", "submitted", "quantity", "order_type", "order_writer"]
     data = pd.DataFrame(data=rows, columns=col_names)
     data = addCalculatedColumns(data)
